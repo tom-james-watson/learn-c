@@ -4,7 +4,7 @@ I'm currently trying to do a C refresher after not having touched it since unive
 
 ## Notes
 
-### Debugging
+### Debugging
 
 Ensure that you compile with:
 
