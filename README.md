@@ -2,9 +2,9 @@
 
 I'm currently trying to do a C refresher after not having touched it since university. I'm going through Zed Shaw's Learn C The Hard Way.
 
-## Notes
+# Notes
 
-### Debugging
+## Debugging
 
 Ensure that you compile with:
 
@@ -55,3 +55,17 @@ Debug variables:
 ```
 p <variable name>
 ```
+
+## Pointers
+
+`type *ptr` - A pointer of <type> named `ptr`
+
+`*ptr` - The value of whater `ptr` is pointed at
+
+`*(ptr + i)` - The value of (whatever `ptr` is pointed at plus `i`)
+
+`&thing` - The address of thing
+
+`type *ptr = &thing` - A pointer of <type> named `ptr` set to the address of `thing`
+
+`ptr++` - Increment where `ptr` points
