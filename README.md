@@ -21,7 +21,9 @@ lldb <c program>
 If you have a run-tine error, execution will just stop at the error, so you don't need to do anything here. If you want to just investigate some weirdness, you'll need to set a breakpoint:
 
 ```
-breakpoint set --name main
+breakpoint set --name foo_func // break at function
+breakpoint set --file foo.c --line 12 // break at line of file
+breakpoint set -f foo.c -l 12 // break at line of file shorthand
 ```
 
 Need to do some more investigation on how to set other kinds of breakpoints.
