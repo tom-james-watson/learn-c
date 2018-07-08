@@ -133,6 +133,18 @@ void Database_get(struct Connection *conn, int id) {
   }
 }
 
+void Database_find(struct Connection *conn, char *query) {
+  for (int i = 0; i < MAX_ROWS; i++) {
+    struct Address *addr = &conn->db->rows[i];
+    if (addr->set && strcmp(addr->name, query) == 0) {
+      Address_print(addr);
+      return;
+    }
+  }
+
+  die("Name not found");
+}
+
 void Database_delete(struct Connection *conn, int id) {
   struct Address addr = {.id = id, .set = 0};
   conn->db->rows[id] = addr;
@@ -151,6 +163,13 @@ void Database_list(struct Connection *conn) {
   }
 }
 
+int get_id(char *arg) {
+  int id = atoi(arg);
+  if (id >= MAX_ROWS) die("There are not that many records.");
+
+  return id;
+}
+
 int main(int argc, char *argv[]) {
   if (argc < 3)
     die("USAGE: ex17 <dbfile> <action> [action params]");
@@ -158,10 +177,7 @@ int main(int argc, char *argv[]) {
   char *filename = argv[1];
   char action = argv[2][0];
   struct Connection *conn = Database_open(filename, action);
-  int id = 0;
-
-  if (argc > 3) id = atoi(argv[3]);
-  if (id >= MAX_ROWS) die("There are not that many records.");
+  int id;
 
   switch(action) {
     case 'c':
@@ -173,13 +189,23 @@ int main(int argc, char *argv[]) {
       if (argc != 4)
         die("Need an id to get");
 
+      id = get_id(argv[3]);
       Database_get(conn, id);
+      break;
+
+    case 'f':
+      if (argc != 4)
+        die("Need an name to find");
+
+      char *query = argv[3];
+      Database_find(conn, query);
       break;
 
     case 's':
       if (argc != 6)
         die("Need id, name, email to set");
 
+      id = get_id(argv[3]);
       char *name = argv[4];
       char *email = argv[5];
       Database_set(conn, id, name, email);
@@ -190,6 +216,7 @@ int main(int argc, char *argv[]) {
       if (argc != 4)
         die("Need id to delete");
 
+      id = get_id(argv[3]);
       Database_delete(conn, id); // BUG
       Database_write(conn);
       break;
