@@ -233,3 +233,20 @@ printf(
 );
 // ptr2ptr=0x7fff5a33a790, *ptr2ptr=0x7fff5a33a79c, **ptr2ptr=1
 ```
+
+## Heap vs Stack
+
+Both are chunks of RAM. Heap is easier to explain. It's just all the remaining memory in your computer, and you access it with the function `malloc` to get more. Each time you call `malloc`, the OS uses internal functions to register that piece of memory to you, and then returns a pointer to it. When you are done with it, you use `free` to return the block of memory to the OS. Failing to do so will cause a memory leak.
+
+The stack is a special region of memory that stores temporary variables, which each function creates as locals to that function. Each argument to a function is _pushed_ onto the stack and then used inside the function. It's truly a stack data structure - LIFO. The same happens for variables locally defined within a function. When the function exits, the C compiler simply pops these variables off of the stack to clean up. Using the stack prevents memory leaks.
+
+*If you didn't get it from `malloc`, or a function that calls `malloc`, then it's on the stack.*
+
+Problems to watch out for:
+* If you get a block of memory from `malloc` and have that pointer on the stack, then when the function exits the pointer will get popped off the stack and lost.
+* If you put too much data on the stack (like large structs and arrays), then you can cause a _stack overflow_. Use `malloc` and the heap in this case.
+* If you take a pointer to something on the stack, and then pass or return it from your function, then the function receiving it will _segmentation fault_ (segfault), because the actual data will get popped off and disappear.
+
+Typically each thread gets a stack, whereas a whole application will share one heap.
+
+Stack is faster. Allocation or deallocation is very simple, just moving a pointer. Heap (de)allocation is much more complex. Bytes in the stack tend to be reused very often and as such are usually mapped to processor cache, making it even faster.
