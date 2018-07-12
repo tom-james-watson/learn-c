@@ -36,7 +36,8 @@ int main(int argc, char *argv[]) {
 
   printf("---\n");
 
-  // fourth way with pointers in a stupid complex way
+  // fourth way with incrementing pointers and pointer arithmetic for
+  // comparison
   for (
     cur_name = names, cur_age = ages;
     (cur_age - ages) < count;

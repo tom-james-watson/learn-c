@@ -60,9 +60,15 @@ p <variable name>
 
 ## Pointers
 
+### What's the point of pointers?
+
+C is a call-by-value language. When you call a function in C, the value of any parameters are literally copied into the function's call stack. Pass an int, 4-bytes are copied into the function. Pass a char and 1-byte is copied into the function. What happens when you want to pass a 100k element int array into a function? Instead of copying 400,000 bytes, you simply pass a pointer to the array (8 bytes for 64 bit) instead. Same principle goes for large structs - good practice is to pass in a reference to the struct instead of the struct itself.
+
+### Pointer syntax
+
 `type *ptr` - A pointer of <type> named `ptr`
 
-`*ptr` - The value of whater `ptr` is pointed at
+`*ptr` - The value of whatever `ptr` is pointed at
 
 `*(ptr + i)` - The value of (whatever `ptr` is pointed at plus `i`)
 
@@ -71,3 +77,159 @@ p <variable name>
 `type *ptr = &thing` - A pointer of <type> named `ptr` set to the address of `thing`
 
 `ptr++` - Increment where `ptr` points
+
+### Examples
+
+#### Dereferencing
+
+`*var` is used to dereference and pointer and can be used to get and to set a value.
+
+```
+// declare int ival and int pointer iptr.  Assign address of ival to iptr.
+int ival = 1;
+int *iptr = &ival;
+
+// dereference iptr to get value pointed to, ival, which is 1
+int get = *iptr;
+printf("*iptr = %d\n", get); // *iptr = 1
+
+// dereference iptr to set value pointed to, changes ival to 2
+*iptr = 2;
+printf("*iptr = %d\n", set); // *iptr = 2
+printf("ival = %d\n", ival); // ival = 2
+```
+
+#### Can't mix pointer types
+
+A pointer stores both the address of another variable, and what the TYPE is of the variable at that address. It needs to know the type so that it knows how many bytes the variable takes up. This means the below will throw a `assignment from incompatible pointer type`.
+
+```
+// declare an int value and an int pointer
+int ival = 1;
+int *iptr = &ival;
+
+// declare a float value and a float pointer
+float fval = 1.0f;
+float *fptr = &fval;
+
+// declare a char value and a char pointer
+char cval = 'a';
+char *cptr = &cval;
+
+iptr = &fval;
+fptr = &ival;
+iptr = &cval;
+```
+
+#### Pointers to arrays
+
+Just like you have a pointer to an int or float, you can have a pointer to an array as long as the pointer is the same type as the elements of the array.
+
+```
+int myarray[4] = {1,2,3,0};
+int *ptr = myarray;
+```
+
+When an array is created, int myarray[4] = {1,2,3,0};, what actually happens is the compiler allocates memory for the entire array and then assigns a pointer to the array variable, in this case myarray, holding the address of the first element in the array.
+
+Pointers and arrays are NOT interchangable. You can assign an array variable to a pointer of the same type but not the opposite. When an array is created, the array variable cannot be reassigned.
+
+```
+int myarray[4] = {1,2,3,0};
+
+// you can do this, myarray is a valid int pointer pointing to the first element of myarray
+int *ptr = myarray;
+printf("*ptr=%d\n", *ptr); // *ptr=1
+
+// you cannot do this, array variables cannot be reassigned
+// myarray = ptr
+// myarray = myarray2
+// myarray = &myarray2[0]
+```
+
+You can use pointers to loop through arrays.
+
+```
+int ages[] = { 23, 43, 12, 89, 2 };
+char *names[] = {
+  "Alan", "Frank", "Mary", "John", "Lisa"
+};
+
+// safely get the size of ages
+int count = sizeof(ages) / sizeof(int);
+int i;
+
+// first way of indexing
+for (i = 0; i < count; i++) {
+  printf("%s has %d years alive.\n", names[i], ages[i]);
+}
+
+// set up the pointers to the start of the arrays
+int *cur_age = ages;
+char **cur_name = names;
+
+// second way of indexing, using pointers
+for (i = 0; i < count; i++) {
+  printf("%s is %d years old.\n", *(cur_name + i), *(cur_age + i));
+}
+
+// third way, pointers are just arrays
+for (i = 0; i < count; i++) {
+  printf("%s is %d years old again.\n", cur_name[i], cur_age[i]);
+}
+
+// fourth way with incrementing pointers and pointer arithmetic for
+// comparison
+for (
+    cur_name = names, cur_age = ages;
+    (cur_age - ages) < count;
+    cur_age++, cur_name++
+    ) {
+  printf("%s lived %d years so far.\n", *cur_name, *cur_age);
+}
+```
+
+#### Pointers to structs
+
+Like an array, a pointer to a struct holds the memory address of the first element in the struct. Here is some example code for declaring and using a struct pointer.
+
+```
+struct person {
+  int age;
+  char *name;
+};
+struct person first;
+struct person *ptr;
+
+first.age = 21;
+first.name = "full name";
+ptr = &first;
+
+printf("age=%d, name=%s\n", first.age, ptr->name); // age=21, name=full name
+```
+
+You access values of a struct via `strct.field`. The -> operator is used to access a value from a struct pointer. This is equivalent to doing `(*ptr).field`, but as accessing a value from a struct pointer is so common, it has its own syntax.
+
+#### Pointers to pointers
+
+```
+int val = 1;
+int *ptr = 0;
+
+// declare a variable ptr2ptr which holds the value-at-address of
+// an *int type which in holds the value-at-address of an int type
+int **ptr2ptr = 0;
+ptr = &val;
+ptr2ptr = &ptr;
+
+printf("&ptr=%p, &val=%p\n", (void *)&ptr, (void *)&val);
+// &ptr=0x7fff5a33a790, &val=0x7fff5a33a79c
+
+printf(
+  "ptr2ptr=%p, *ptr2ptr=%p, **ptr2ptr=%d\n",
+  ptr2ptr,
+  *ptr2ptr,
+  **ptr2ptr
+);
+// ptr2ptr=0x7fff5a33a790, *ptr2ptr=0x7fff5a33a79c, **ptr2ptr=1
+```
