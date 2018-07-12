@@ -36,6 +36,8 @@ void pop(struct Stack *stack) {
 int peek(struct Stack *stack);
 
 void is_empty(struct Stack *stack) {
+  printf("> isempty\n");
+
   if (stack->pos == stack->entries) {
     printf("empty\n");
   } else {
