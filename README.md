@@ -84,7 +84,7 @@ C is a call-by-value language. When you call a function in C, the value of any p
 
 `*var` is used to dereference and pointer and can be used to get and to set a value.
 
-```
+```c
 // declare int ival and int pointer iptr.  Assign address of ival to iptr.
 int ival = 1;
 int *iptr = &ival;
@@ -103,7 +103,7 @@ printf("ival = %d\n", ival); // ival = 2
 
 A pointer stores both the address of another variable, and what the TYPE is of the variable at that address. It needs to know the type so that it knows how many bytes the variable takes up. This means the below will throw a `assignment from incompatible pointer type`.
 
-```
+```c
 // declare an int value and an int pointer
 int ival = 1;
 int *iptr = &ival;
@@ -125,7 +125,7 @@ iptr = &cval;
 
 Just like you have a pointer to an int or float, you can have a pointer to an array as long as the pointer is the same type as the elements of the array.
 
-```
+```c
 int myarray[4] = {1,2,3,0};
 int *ptr = myarray;
 ```
@@ -134,7 +134,7 @@ When an array is created, int myarray[4] = {1,2,3,0};, what actually happens is 
 
 Pointers and arrays are NOT interchangable. You can assign an array variable to a pointer of the same type but not the opposite. When an array is created, the array variable cannot be reassigned.
 
-```
+```c
 int myarray[4] = {1,2,3,0};
 
 // you can do this, myarray is a valid int pointer pointing to the first element of myarray
@@ -149,7 +149,7 @@ printf("*ptr=%d\n", *ptr); // *ptr=1
 
 You can use pointers to loop through arrays.
 
-```
+```c
 int ages[] = { 23, 43, 12, 89, 2 };
 char *names[] = {
   "Alan", "Frank", "Mary", "John", "Lisa"
@@ -193,7 +193,7 @@ for (
 
 Like an array, a pointer to a struct holds the memory address of the first element in the struct. Here is some example code for declaring and using a struct pointer.
 
-```
+```c
 struct person {
   int age;
   char *name;
@@ -212,7 +212,7 @@ You access values of a struct via `strct.field`. The -> operator is used to acce
 
 #### Pointers to pointers
 
-```
+```c
 int val = 1;
 int *ptr = 0;
 
@@ -238,7 +238,7 @@ printf(
 
 Pointers can be created to a function and used like so:
 
-```
+```c
 #include <stdio.h>
 
 // Define a function that we can make a pointer to
@@ -255,7 +255,7 @@ int main(int argc, char *argv[]) {
 
 You can also pass function pointers as arguments to other functions:
 
-```
+```c
 #include <stdio.h>
 
 int add(int x, int y) {
@@ -280,7 +280,7 @@ int main(int argc, char *argv[]) {
 
 `typedef`s can be used to make dealing with function pointers much nicer. Here's the same code as above but using a `typedef`:
 
-```
+```c
 #include <stdio.h>
 
 typedef int (*operation)(int, int);
