@@ -234,6 +234,78 @@ printf(
 // ptr2ptr=0x7fff5a33a790, *ptr2ptr=0x7fff5a33a79c, **ptr2ptr=1
 ```
 
+#### Pointers to functions
+
+Pointers can be created to a function and used like so:
+
+```
+#include <stdio.h>
+
+// Define a function that we can make a pointer to
+int add(int n, int m) {
+  return n+m;
+}
+
+int main(int argc, char *argv[]) {
+  // Create a pointer to a function with the same prototype as add
+  int (*funcPtr)(int,int) = add;
+  printf("%d\n", (*funcPtr)(6, 3)); // 9
+}
+```
+
+You can also pass function pointers as arguments to other functions:
+
+```
+#include <stdio.h>
+
+int add(int x, int y) {
+    return x + y;
+}
+
+int subtract(int x, int y) {
+    return x - y;
+}
+
+// Another function that accepts a pointer to a function with the same
+// prototype as add/subtract
+int calculate(int (*op)(int,int), int x, int y) {
+  return op(x, y);
+}
+
+int main(int argc, char *argv[]) {
+  printf("%d\n", calculate(add, 6, 3)); // 9
+  printf("%d\n", calculate(subtract, 6, 3)); // 3
+}
+```
+
+`typedef`s can be used to make dealing with function pointers much nicer. Here's the same code as above but using a `typedef`:
+
+```
+#include <stdio.h>
+
+typedef int (*operation)(int, int);
+
+int add(int x, int y) {
+    return x + y;
+}
+
+int subtract(int x, int y) {
+    return x - y;
+}
+
+// Another function that accepts a pointer to a function with the same
+// prototype as add/subtract
+int calculate(operation op, int x, int y) {
+  return op(x, y);
+}
+
+int main(int argc, char *argv[]) {
+  printf("%d\n", calculate(add, 6, 3)); // 9
+  printf("%d\n", calculate(subtract, 6, 3)); // 3
+}
+```
+
+
 ## Heap vs Stack
 
 Both are chunks of RAM. Heap is easier to explain. It's just all the remaining memory in your computer, and you access it with the function `malloc` to get more. Each time you call `malloc`, the OS uses internal functions to register that piece of memory to you, and then returns a pointer to it. When you are done with it, you use `free` to return the block of memory to the OS. Failing to do so will cause a memory leak.
