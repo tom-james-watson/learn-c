@@ -91,9 +91,10 @@ void Stack_is_empty(struct Stack *stack) {
 
 void Stack_peek(struct Stack *stack) {
   if (stack->pos == 0) {
-    die("segfault");
+    printf("null\n");
+  } else {
+    printf("%d\n", stack->entries[stack->pos - 1]);
   }
-  printf("%d\n", stack->entries[stack->pos - 1]);
 }
 
 void Stack_print(struct Stack *stack) {
