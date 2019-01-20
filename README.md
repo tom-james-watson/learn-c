@@ -1,6 +1,6 @@
 # learnc
 
-I'm currently trying to do a C refresher after not having touched it since university. Mostly I'm just going through Zed Shaw's Learn C The Hard Way.
+I'm currently trying to do a C refresher after not having touched it since university. I'm going through Zed Shaw's Learn C The Hard Way and also reading Operating Systems Three Easy Pieces.
 
 # Notes
 
