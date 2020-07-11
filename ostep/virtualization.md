@@ -147,3 +147,22 @@ At which point you can perform a context switch during the return-from-trap.
 #### Timer Interrupt
 
 A timer device can be programmed to raise an interrupt every so many milliseconds. When the interrupt handler runs, the OS regains control and can context switch.
+
+## Scheduling
+
+#### Multi Level Feedback Queue
+
+This scheduler has multiple distinct queues, each with its own associated priority level. The basic rules for this scheduler are as follows:
+
+* if Priority(A) > Priority(B), A runs, B doesn't
+* if Priority(A) == Priority(B), A & B run in Round Robin
+
+The key to the MLFQ is how it assigns priority. Processes that relinquish CPU control for I/O often will be given a high priority to ensure responsiveness. Long running CPU intensive tasks will be assigned low priority.  Processes don't have a fixed priority - they vary over time as the scheduler learns about them.
+
+The basic version of how that works is that if a process executes a whole CPU time slice without giving up the processor, it will be moved down a priority level. This approximates SJF (Shortest Job First), as processes wil lbe assumed to be short jobs until they prove themselves not to be as they are moved down through the queues over time.
+
+To prevent processes in lower queues from becoming CPU starved, for example if there are many high priority processes using CPU, we introduce the concept of priority boosting - after some time period S, move all jobs in the system to the highest priority. This also accommodates for a process switching from a CPU-bound to an interactive job.
+
+It would be possible for a process to game the scheduler by performing I/O just before its CPU time slice ends, thus staying at the same priority forever. To prevent this, we instead can keep track of how much CPU time a process has used at a given queue level over time, regardless of I/O, and once used up lower the process a level.
+
+This type of scheduler is the base scheduler used on BSD derivatives, Solaris and Windows.
